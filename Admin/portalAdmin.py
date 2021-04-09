@@ -54,7 +54,7 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
 
     client.loop_start()
     print("Publishing message to topic","/data") 
-    client.publish("/data", payload="inserted id:"+str(request.id)+" "+str(db[request.id]))
+    client.publish("/data", payload="I,"+str(request.id)+","+str(db[request.id]))
     client.loop_stop()
 
     return helloworld_pb2.HelloReply(message='Successfully created client with CID = %s!' % request.id)
@@ -67,7 +67,7 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
 
     client.loop_start()
     print("Publishing message to topic","/data") 
-    client.publish("/data", payload="updated "+str(db[request.id]))
+    client.publish("/data", payload="U,"+str(request.id)+","+str(db[request.id]))
     client.loop_stop()
 
     return helloworld_pb2.HelloReply(message='Successfully updated client with CID = %s!' % request.id)
@@ -85,7 +85,7 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
 
     client.loop_start()
     print("Publishing message to topic","/data") 
-    client.publish("/data", payload="deleted "+str(request.id))
+    client.publish("/data", payload="D,"+str(request.id))
     client.loop_stop()
 
     return helloworld_pb2.HelloReply(message='Successfully deleted client with CID = %s!' % request.id)
