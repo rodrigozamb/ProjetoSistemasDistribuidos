@@ -14,26 +14,60 @@ port = 12345                           # Reserve a port for your service.
 
 s.connect((host, port))
 
-flag = True
+def menu():
 
-while flag:
-	
-	msg = input("Digite mensagem: ")
-	s.send(msg.encode())
+	print("1 - Inserir nova Tarefa")
+	print("2 - Modificar uma Tarefa")
+	print("3 - Listar tarefas")
+	print("4 - Apagar todas tarefa")
+	print("5 - Apagar uma tarefa")
+	print("6 - Sair")
+	op = input("Escolha a operação desejada:")
+	return op
 
-	if msg == "SAIR":
-		break
 
-	if msg == "1":
-		print("Digite a chave e valor separados por vírgula ( ex: '1,lala' ) ")
-		insertData = input()
-		s.send(insertData.encode())
-	elif msg == 2:
-		print("Listando dados:")
+def run():
+	flag = True
+
+	while flag:
+
+		msg = menu()
 		
-	data = s.recv(1024)
-	print("Mensagem recebida: ",data.decode())
+		# msg = input("Digite mensagem: ")
+		s.send(msg.encode())
+
+		if msg == "6":
+			# s.send("SAIR".encode())
+			break
+		# é preciso que o usuario informe seu id? ou o portalCLiente ira perguntar ao portalAdmin??
+		if msg == "1":
+			print("Digite o seu ID, título e descrição da tarefa separados por vírgula ( ex: '1,Projeto SD, Fazer parte 1' ) ")
+			insertData = input()
+			s.send(insertData.encode())
+		elif msg == "2":
+			print("Digite o ID, título e a nova descrição da tarefa separados por vírgula ( ex: '1,Projeto SD, aprimorar parte 1' ) ")
+			insertData = input()
+			s.send(insertData.encode())
+		elif msg == "3":
+			print("Digite seu id:")
+			userid = input()
+			s.send(userid.encode())
+		elif msg == "4":
+			print("Digite seu id:")
+			userid = input()
+			s.send(userid.encode())
+		elif msg == "5":
+			print("Digite o ID e título da tarefa que deseja excluir separados por vírgula ( ex: '1,Projeto SD' ) ")
+			insertData = input()
+			s.send(insertData.encode())
 
 
-print("Desconectando Client...")
-s.close()    
+			
+		data = s.recv(1024)
+		print("Mensagem recebida: ",data.decode())
+
+
+	print("Desconectando Client...")
+	s.close()
+
+run()
