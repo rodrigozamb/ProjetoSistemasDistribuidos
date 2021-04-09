@@ -21,6 +21,20 @@ import grpc
 import helloworld_pb2
 import helloworld_pb2_grpc
 
+####################################
+import paho.mqtt.client as mqtt
+import time
+
+broker = "localhost"
+
+print("creating new instance")
+
+client = mqtt.Client("admin")
+
+print("connecting to broker")
+client.connect(broker)
+####################################
+
 db = dict([])
 
 class Greeter(helloworld_pb2_grpc.GreeterServicer):
@@ -37,6 +51,12 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
     print("Inserting new Client "+request.name+" with ID = "+str(request.id))
     db[request.id] = request.name
     print(db)
+
+    client.loop_start()
+    print("Publishing message to topic","/data") 
+    client.publish("/data", payload="inserted id:"+str(request.id)+" "+str(db[request.id]))
+    client.loop_stop()
+
     return helloworld_pb2.HelloReply(message='Successfully created client with CID = %s!' % request.id)
   
   def updateClient(self,request,context):
@@ -44,17 +64,30 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
       return helloworld_pb2.HelloReply(message='Error! Client with CID = %s not found.' % request.id)
     db[request.id] = request.name
     print(db)
+
+    client.loop_start()
+    print("Publishing message to topic","/data") 
+    client.publish("/data", payload="updated "+str(db[request.id]))
+    client.loop_stop()
+
     return helloworld_pb2.HelloReply(message='Successfully updated client with CID = %s!' % request.id)
 
   def findClient(self, request, context):
     if request.id not in db.keys():
       return helloworld_pb2.HelloReply(message='Error! Client with CID = %s not found.' % request.id)
+    
     return helloworld_pb2.HelloReply(message=db[request.id])
 
   def deleteClient(self, request, context):
     if request.id not in db.keys():
       return helloworld_pb2.HelloReply(message='Error! Client with CID = %s not found.' % request.id)
     del db[request.id]
+
+    client.loop_start()
+    print("Publishing message to topic","/data") 
+    client.publish("/data", payload="deleted "+str(request.id))
+    client.loop_stop()
+
     return helloworld_pb2.HelloReply(message='Successfully deleted client with CID = %s!' % request.id)
 
 
@@ -64,6 +97,8 @@ def serve():
     server.add_insecure_port('[::]:50051')
     server.start()
     server.wait_for_termination()
+
+
 
 
 if __name__ == '__main__':

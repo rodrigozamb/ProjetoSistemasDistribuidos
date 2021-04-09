@@ -4,11 +4,36 @@
 import socket                               # Import socket module
 import threading
 
+####################################
+import paho.mqtt.client as mqtt
+import time
+
+def on_message(client, userdata, message):
+    print("message received -> ",str(message.payload.decode("utf-8")))
+    if message.retain==1:
+        print("This is a retained message")
+	
+
+broker = "localhost"
+
+print("creating new instance")
+
+client = mqtt.Client("client")
+client.on_message=on_message
+
+print("connecting to broker")
+client.connect(broker)
+
+client.subscribe("/data", 0)
+while client.loop() == 0:
+    pass
+####################################
+
 packageSize = 1024  
 
 s = socket.socket()                         # Create a socket object
 # host = socket.gethostname()                 # Get local machine name
-host = ''                 # Get local machine name
+host = "localhost"                 # Get local machine name
 port = 12345                                # Reserve a port for your service.
 s.bind((host, port))                        # Bind to the port
 
