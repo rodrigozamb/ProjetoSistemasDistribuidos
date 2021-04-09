@@ -9,7 +9,7 @@ import socket                          # Import socket module
 packageSize = 1024                     # Size of package to send or receive
 
 s = socket.socket()                    # Create a socket object
-host = socket.gethostname()            # Get local machine name
+host = "localhost"            # Get local machine name
 port = 12345                           # Reserve a port for your service.
 
 s.connect((host, port))
