@@ -9,23 +9,24 @@ import paho.mqtt.client as mqtt
 import time
 
 database = dict([])
+users = dict([])
 
 def on_message(client, userdata, message):
-   global database
+   global users
    print(str(message.payload.decode("utf-8")))
    msg = []
    msg = str(message.payload.decode("utf-8")).strip().split(",")
 
    if msg[0] == "I":
-      if msg[0] not in database.keys():
-         database[msg[1]] = msg[2]
+      if msg[0] not in users.keys():
+         users[msg[1]] = msg[2]
    elif msg[0] == "U":
-      database[msg[1]] = msg[2]
+      users[msg[1]] = msg[2]
    elif msg[0] == "D":
-      del database[msg[1]]
+      del users[msg[1]]
       
    print(msg)
-   print(database)
+   print(users)
    if message.retain == 1:
       print("This is a retained message")
 
