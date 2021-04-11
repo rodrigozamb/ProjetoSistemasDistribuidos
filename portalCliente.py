@@ -36,14 +36,9 @@ broker = "localhost"
 print("creating new instance")
 
 client = mqtt.Client("client")
-client.on_message = on_message
 
 print("connecting to broker")
 client.connect(broker)
-
-client.subscribe("/data", 0)
-while client.loop() == 0:
-   pass
 ####################################
 
 packageSize = 1024
@@ -54,6 +49,13 @@ host = "localhost"                 # Get local machine name
 port = 12345                                # Reserve a port for your service.
 s.bind((host, port))                        # Bind to the port
 
+
+def subscribeToTopic():
+   global client
+   client.subscribe("/data", 0)
+   client.on_message = on_message
+   while True: 
+      client.loop()
 
 def handle_client(c, addr):
    global database
@@ -78,14 +80,17 @@ def handle_client(c, addr):
                insertData = insertData.split(",")
 
                if len(insertData) == 3:
+                  if insertData[0] not in users.keys():
+                     c.send(
+                     "Operation Fail - invalid CID".encode())
+                  else:
+                     if insertData[0] not in database.keys():
+                        database[insertData[0]] = []
 
-                  if insertData[0] not in database.keys():
-                     database[insertData[0]] = []
-
-                  database[insertData[0]].append(
-                     (insertData[1], insertData[2]))
-                  print(database)
-                  c.send("Operation Success".encode())
+                     database[insertData[0]].append(
+                        (insertData[1], insertData[2]))
+                     print(database)
+                     c.send("Operation Success".encode())
                else:
                   c.send(
                      "Operation Fail - check key or value or identation".encode())
@@ -97,7 +102,11 @@ def handle_client(c, addr):
                insertData = insertData.split(",")
 
                if len(insertData) == 3:
-                  userid = insertData[0]
+                  if insertData[0] not in users.keys():
+                     c.send(
+                     "Operation Fail - invalid CID".encode())
+                  else:
+                     userid = insertData[0]
 
                   if userid not in database.keys():
                      c.send("Operation Fail - User not found".encode())
@@ -127,14 +136,22 @@ def handle_client(c, addr):
                exists = False
 
                if len(userid) == 1:
-                  if userid not in database.keys():
-                     c.send("Operation Fail - User not found".encode())
+                  if insertData[0] not in users.keys():
+                     c.send(
+                     "Operation Fail - invalid CID".encode())
                   else:
-                     resp = str(database[userid])
-                     if len(database[userid]) > 0:
-                           c.send(resp.encode())
+                     if userid not in users.keys():
+                        c.send(
+                        "Operation Fail - invalid CID".encode())
                      else:
-                           c.send("User does not have tasks".encode())
+                        if userid not in database.keys():
+                           c.send("Operation Fail - User not found".encode())
+                        else:
+                           resp = str(database[userid])
+                           if len(database[userid]) > 0:
+                                 c.send(resp.encode())
+                           else:
+                                 c.send("User does not have tasks".encode())
 
                else:
                   c.send(
@@ -148,11 +165,15 @@ def handle_client(c, addr):
                userid = insertData
 
                if len(userid) == 1:
-                  if userid not in database.keys():
-                     c.send("Operation Fail - User not found".encode())
+                  if insertData[0] not in users.keys():
+                     c.send(
+                     "Operation Fail - invalid CID".encode())
                   else:
-                     database[userid] = []
-                     c.send("Operation Success".encode())
+                     if userid not in database.keys():
+                        c.send("Operation Fail - User not found".encode())
+                     else:
+                        database[userid] = []
+                        c.send("Operation Success".encode())
                else:
                   c.send(
                      "Operation Fail - check key or value or identation".encode())
@@ -164,7 +185,11 @@ def handle_client(c, addr):
                insertData = insertData.split(",")
 
                if len(insertData) == 2:
-                  userid = insertData[0]
+                  if insertData[0] not in users.keys():
+                     c.send(
+                     "Operation Fail - invalid CID".encode())
+                  else:
+                     userid = insertData[0]
 
                   if userid not in database.keys():
                      c.send("Operation Fail - User not found".encode())
@@ -194,6 +219,10 @@ def start():
    # Now wait for client connections.
    s.listen(5)
    print("[LISTENING] Server is listening on "+str(port))
+
+   threadsub = threading.Thread(target=subscribeToTopic, args=())
+   threadsub.start()
+   
    while True:
       # Establish connection with client.
       c, addr = s.accept()
