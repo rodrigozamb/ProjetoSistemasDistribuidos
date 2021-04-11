@@ -13,7 +13,8 @@ users = dict([])
 
 def on_message(client, userdata, message):
    global users
-   print(str(message.payload.decode("utf-8")))
+
+   print("\n",str(message.payload.decode("utf-8")))
    msg = []
    msg = str(message.payload.decode("utf-8")).strip().split(",")
 
@@ -25,18 +26,13 @@ def on_message(client, userdata, message):
    elif msg[0] == "D":
       del users[msg[1]]
       
-   print(msg)
    print(users)
    if message.retain == 1:
       print("This is a retained message")
 
 
 broker = "localhost"
-
-print("creating new instance")
-
 client = mqtt.Client("client")
-
 print("connecting to broker")
 client.connect(broker)
 ####################################
@@ -96,7 +92,7 @@ def handle_client(c, addr):
                      "Operation Fail - check key or value or identation".encode())
 
          elif messageDecoded == "2":
-               # alterar uma nova tarefa
+               # alterar uma tarefa
                idata = c.recv(1024)
                insertData = idata.decode()
                insertData = insertData.split(",")
@@ -109,7 +105,7 @@ def handle_client(c, addr):
                      userid = insertData[0]
 
                   if userid not in database.keys():
-                     c.send("Operation Fail - User not found".encode())
+                     c.send("Operation Fail - Task not found".encode())
                   else:
                      index = -1
                      for i in range(0, len(database[userid])):
@@ -145,20 +141,17 @@ def handle_client(c, addr):
                         "Operation Fail - invalid CID".encode())
                      else:
                         if userid not in database.keys():
-                           c.send("Operation Fail - User not found".encode())
+                           c.send("User does not have tasks".encode())
                         else:
                            resp = str(database[userid])
-                           if len(database[userid]) > 0:
-                                 c.send(resp.encode())
-                           else:
-                                 c.send("User does not have tasks".encode())
+                           c.send(resp.encode())
 
                else:
                   c.send(
                      "Operation Fail - check key or value or identation".encode())
 
          elif messageDecoded == "4":
-               # listar tarefas
+               # apagar todas tarefas
                idata = c.recv(1024)
                insertData = idata.decode()
 
@@ -170,7 +163,7 @@ def handle_client(c, addr):
                      "Operation Fail - invalid CID".encode())
                   else:
                      if userid not in database.keys():
-                        c.send("Operation Fail - User not found".encode())
+                        c.send("Operation Fail - User does not have tasks".encode())
                      else:
                         database[userid] = []
                         c.send("Operation Success".encode())
@@ -179,7 +172,7 @@ def handle_client(c, addr):
                      "Operation Fail - check key or value or identation".encode())
 
          elif messageDecoded == "5":
-               # alterar uma nova tarefa
+               # apagar uma tarefa
                idata = c.recv(1024)
                insertData = idata.decode()
                insertData = insertData.split(",")
@@ -192,7 +185,7 @@ def handle_client(c, addr):
                      userid = insertData[0]
 
                   if userid not in database.keys():
-                     c.send("Operation Fail - User not found".encode())
+                     c.send("Operation Fail - Task not found".encode())
                   else:
                      index = -1
                      for i in range(0, len(database[userid])):

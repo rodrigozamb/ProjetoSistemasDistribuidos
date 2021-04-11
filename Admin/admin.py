@@ -21,6 +21,15 @@ import grpc
 import helloworld_pb2
 import helloworld_pb2_grpc
 
+def validateUserIDType():
+  while True:
+    userid = input("Digite o id: ")
+
+    if not userid.isdigit():
+      print('**ID must be an integer**')
+    else:
+      break
+  return int(userid)
 
 def run():
   channel = grpc.insecure_channel('localhost:50051')
@@ -30,17 +39,17 @@ def run():
     op = menu()
 
     if op == 1 or op == 2:
-      userid = int(input("Digite o id: "))
-      username = input("Digite o dado: ")
+      userid = validateUserIDType()
+      username = input("Digite o nome de usuario: ")
 
       if op == 1:
         response = stub.insertNewClient(helloworld_pb2.InsertRequest(id=userid,name=username))
-        print("Greeter client received: " + response.message)
+        print("\nGreeter client received: " + response.message)
       else:
         response = stub.updateClient(helloworld_pb2.ModifyRequest(id=userid,name=username))
-        print("Greeter client received: " + response.message)
+        print("\nGreeter client received: " + response.message)
     elif op == 3 or op == 4:
-      userid = int(input("Digite o id: "))
+      userid = validateUserIDType()
 
       if op == 3:
         response = stub.findClient(helloworld_pb2.FindRequest(id=userid))
@@ -54,6 +63,7 @@ def run():
 
 
 def menu():
+  print("\n-------------MENU-------------")
   print("1 - Inserir novo Cliente")
   print("2 - Modificar um Cliente")
   print("3 - Procurar Cliente")

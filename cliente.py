@@ -1,21 +1,29 @@
-
 #client.py
+#!/usr/bin/python         
 
-#!/usr/bin/python                      # This is client.py file
+import socket               
 
-import socket                          # Import socket module
+packageSize = 1024                  
 
-
-packageSize = 1024                     # Size of package to send or receive
-
-s = socket.socket()                    # Create a socket object
-host = "localhost"            # Get local machine name
-port = 12345                           # Reserve a port for your service.
+s = socket.socket()                  
+host = "localhost"           
+port = 12345                        
 
 s.connect((host, port))
 
+def validateUserIDType():
+  while True:
+    userid = input("Digite o id: ")
+
+    if not userid.isdigit():
+      print('**ID must be an integer**')
+    else:
+      break
+  return int(userid)
+
 def menu():
 
+	print("\n-------------MENU-------------")
 	print("1 - Inserir nova Tarefa")
 	print("2 - Modificar uma Tarefa")
 	print("3 - Listar tarefas")
@@ -32,42 +40,36 @@ def run():
 	while flag:
 
 		msg = menu()
-		
-		# msg = input("Digite mensagem: ")
 		s.send(msg.encode())
 
 		if msg == "6":
 			# s.send("SAIR".encode())
 			break
-		# é preciso que o usuario informe seu id? ou o portalCLiente ira perguntar ao portalAdmin??
 		if msg == "1":
-			print("Digite o seu ID, título e descrição da tarefa separados por vírgula ( ex: '1,Projeto SD, Fazer parte 1' ) ")
+			print("\nDigite o seu ID, título e descrição da tarefa separados por vírgula ( ex: '1,Projeto SD, Fazer parte 1' ) ")
 			insertData = input()
 			s.send(insertData.encode())
 		elif msg == "2":
-			print("Digite o ID, título e a nova descrição da tarefa separados por vírgula ( ex: '1,Projeto SD, aprimorar parte 1' ) ")
+			print("\nDigite o ID, título e a nova descrição da tarefa separados por vírgula ( ex: '1,Projeto SD, aprimorar parte 1' ) ")
 			insertData = input()
 			s.send(insertData.encode())
 		elif msg == "3":
-			print("Digite seu id:")
+			print("\nDigite seu id:")
 			userid = input()
 			s.send(userid.encode())
 		elif msg == "4":
-			print("Digite seu id:")
+			print("\nDigite seu id:")
 			userid = input()
 			s.send(userid.encode())
 		elif msg == "5":
-			print("Digite o ID e título da tarefa que deseja excluir separados por vírgula ( ex: '1,Projeto SD' ) ")
+			print("\nDigite o ID e título da tarefa que deseja excluir separados por vírgula ( ex: '1,Projeto SD' ) ")
 			insertData = input()
 			s.send(insertData.encode())
-
-
 			
 		data = s.recv(1024)
-		print("Mensagem recebida: ",data.decode())
+		print("\nMensagem recebida: ",data.decode())
 
-
-	print("Desconectando Client...")
+	print("Desconectando Cliente...")
 	s.close()
 
 run()

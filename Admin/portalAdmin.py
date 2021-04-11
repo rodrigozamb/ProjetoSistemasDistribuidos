@@ -26,11 +26,7 @@ import paho.mqtt.client as mqtt
 import time
 
 broker = "localhost"
-
-print("creating new instance")
-
 client = mqtt.Client("admin")
-
 print("connecting to broker")
 client.connect(broker)
 ####################################
@@ -53,7 +49,7 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
     print(db)
 
     client.loop_start()
-    print("Publishing message to topic","/data") 
+    print("\nPublishing message to topic","/data") 
     client.publish("/data", payload="I,"+str(request.id)+","+str(db[request.id]))
     client.loop_stop()
 
@@ -66,7 +62,7 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
     print(db)
 
     client.loop_start()
-    print("Publishing message to topic","/data") 
+    print("\nPublishing message to topic","/data") 
     client.publish("/data", payload="U,"+str(request.id)+","+str(db[request.id]))
     client.loop_stop()
 
@@ -84,7 +80,7 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
     del db[request.id]
 
     client.loop_start()
-    print("Publishing message to topic","/data") 
+    print("\nPublishing message to topic","/data") 
     client.publish("/data", payload="D,"+str(request.id))
     client.loop_stop()
 
@@ -97,8 +93,6 @@ def serve():
     server.add_insecure_port('[::]:50051')
     server.start()
     server.wait_for_termination()
-
-
 
 
 if __name__ == '__main__':
