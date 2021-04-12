@@ -7,8 +7,8 @@
     Pedro Diogo Machado 11711BCC005
     Betania Maria Freitas de Assunção 11411BSI243
     Rodrigo Zamboni 11721BCC034
-    Roberto junio silva Caetano 11821ecp001
-    Felipe Santos 11711ecp004
+    Roberto Junio Silva Caetano 11821ECP001
+    Felipe Daniel Dias dos Santos 11711ECP004
 
 Tópicos:
 
