@@ -1,5 +1,12 @@
 # Projeto de Sistemas Distribuídos
 
+# Grupo
+Amanda Silva Moreira 11611BCC042
+Yuri Arten Quissak 11321ECP012
+Lorena Elias 11721BCC019
+Pedro Diogo Machado 11711BCC005
+Betania Maria Freitas de Assunção 11411BSI243
+
 Tópicos:
 
 # Arquitetura e Funcionamento
