@@ -6,6 +6,9 @@
     Lorena Elias 11721BCC019
     Pedro Diogo Machado 11711BCC005
     Betania Maria Freitas de Assunção 11411BSI243
+    Rodrigo Zamboni 11721BCC034
+    Felipe Santos
+    Thiago Muniz
 
 Tópicos:
 
