@@ -3,7 +3,7 @@
 
 import socket                               # Import socket module
 import threading
-
+from config import *
 ####################################
 import paho.mqtt.client as mqtt
 import time
@@ -37,12 +37,13 @@ print("connecting to broker")
 client.connect(broker)
 ####################################
 
-packageSize = 1024
-
 s = socket.socket()                         # Create a socket object
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Host e porta agora vem do arquivo de configuração "config.py" #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # host = socket.gethostname()                 # Get local machine name
-host = "localhost"                 # Get local machine name
-port = 12345                                # Reserve a port for your service.
+# host = "localhost"                          # Get local machine name
+# port = 12345                                # Reserve a port for your service.
 s.bind((host, port))                        # Bind to the port
 
 
@@ -60,7 +61,7 @@ def handle_client(c, addr):
 
    try:
       while flag:
-         data = c.recv(1024)
+         data = c.recv(packageSize)
          messageDecoded = data.decode()
          print("["+str(addr)+"] Mensagem recebida: "+messageDecoded)
          if messageDecoded == "6":
@@ -71,7 +72,7 @@ def handle_client(c, addr):
          if messageDecoded == "1":
 
                # adicionar uma nova tarefa
-               idata = c.recv(1024)
+               idata = c.recv(packageSize)
                insertData = idata.decode()
                insertData = insertData.split(",")
 
@@ -93,7 +94,7 @@ def handle_client(c, addr):
 
          elif messageDecoded == "2":
                # alterar uma tarefa
-               idata = c.recv(1024)
+               idata = c.recv(packageSize)
                insertData = idata.decode()
                insertData = insertData.split(",")
 
@@ -125,7 +126,7 @@ def handle_client(c, addr):
 
          elif messageDecoded == "3":
                # listar tarefas
-               idata = c.recv(1024)
+               idata = c.recv(packageSize)
                insertData = idata.decode()
 
                userid = insertData
@@ -152,7 +153,7 @@ def handle_client(c, addr):
 
          elif messageDecoded == "4":
                # apagar todas tarefas
-               idata = c.recv(1024)
+               idata = c.recv(packageSize)
                insertData = idata.decode()
 
                userid = insertData
@@ -173,7 +174,7 @@ def handle_client(c, addr):
 
          elif messageDecoded == "5":
                # apagar uma tarefa
-               idata = c.recv(1024)
+               idata = c.recv(packageSize)
                insertData = idata.decode()
                insertData = insertData.split(",")
 

@@ -2,12 +2,14 @@
 #!/usr/bin/python         
 
 import socket               
-
-packageSize = 1024                  
+from config import *                  
 
 s = socket.socket()                  
-host = "localhost"           
-port = 12345                        
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Host e porta agora vem do arquivo de configuração "config.py" #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# host = "localhost"           
+# port = 12345                        
 
 s.connect((host, port))
 
@@ -66,7 +68,7 @@ def run():
 			insertData = input()
 			s.send(insertData.encode())
 			
-		data = s.recv(1024)
+		data = s.recv(packageSize)
 		print("\nMensagem recebida: ",data.decode())
 
 	print("Desconectando Cliente...")
