@@ -10,6 +10,13 @@ import time
 
 database = dict([])
 users = dict([])
+def connect_portal(host,port):
+   print("attemp to connect Portal with port - ",port)
+   try:
+      s.bind((host, port))                        # Bind to the port
+   except:
+      return connect_portal(host,port+1)
+   return host,port
 
 def on_message(client, userdata, message):
    global users
@@ -44,7 +51,7 @@ s = socket.socket()                         # Create a socket object
 # host = socket.gethostname()                 # Get local machine name
 # host = "localhost"                          # Get local machine name
 # port = 12345                                # Reserve a port for your service.
-s.bind((host, port))                        # Bind to the port
+portal_host, portal_port = connect_portal(host,port)
 
 
 def subscribeToTopic():
@@ -212,7 +219,8 @@ def handle_client(c, addr):
 def start():
    # Now wait for client connections.
    s.listen(5)
-   print("[LISTENING] Server is listening on "+str(port))
+   global portal_port
+   print("[LISTENING] Server is listening on "+str(portal_port))
 
    threadsub = threading.Thread(target=subscribeToTopic, args=())
    threadsub.start()

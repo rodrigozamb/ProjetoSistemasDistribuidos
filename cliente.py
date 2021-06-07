@@ -11,7 +11,16 @@ s = socket.socket()
 # host = "localhost"           
 # port = 12345                        
 
-s.connect((host, port))
+def connect_client(host,port):
+	print("attemp to connect to Client with port - ",port)
+	try:
+		s.connect((host, port))                        # Bind to the port
+	except:
+		return connect_client(host,port+1)
+	return host,port
+
+connect_client(host, port)
+# s.connect((host, port))
 
 def validateUserIDType():
   while True:
