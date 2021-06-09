@@ -34,6 +34,7 @@ import time
 db = dict([])
 
 #Comunicação com o processo Cliente.java responsável pelo ratis
+
 def ratisConn(data):
   
     ratis_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
