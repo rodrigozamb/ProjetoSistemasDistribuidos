@@ -15,6 +15,7 @@
 
 from __future__ import print_function
 import logging
+from adminMenuEnum import adminMenuEnum
 
 import grpc
 
@@ -38,20 +39,20 @@ def run():
   while True:
     op = menu()
 
-    if op == 1 or op == 2:
+    if op == adminMenuEnum.INSERIR_CLIENTE.value or op == adminMenuEnum.MODIFICAR_CLIENTE.value:
       userid = validateUserIDType()
       username = input("Digite o nome de usuario: ")
 
-      if op == 1:
+      if op == adminMenuEnum.INSERIR_CLIENTE.value:
         response = stub.insertNewClient(helloworld_pb2.InsertRequest(id=userid,name=username))
         print("\nGreeter client received: " + response.message)
       else:
         response = stub.updateClient(helloworld_pb2.ModifyRequest(id=userid,name=username))
         print("\nGreeter client received: " + response.message)
-    elif op == 3 or op == 4:
+    elif op == adminMenuEnum.PROCURAR_CLIENTE.value or op == adminMenuEnum.APAGAR_CLIENTE.value:
       userid = validateUserIDType()
 
-      if op == 3:
+      if op == adminMenuEnum.PROCURAR_CLIENTE.value:
         response = stub.findClient(helloworld_pb2.FindRequest(id=userid))
         print("Greeter client received: " + response.message)
       else:
@@ -64,11 +65,11 @@ def run():
 
 def menu():
   print("\n-------------MENU-------------")
-  print("1 - Inserir novo Cliente")
-  print("2 - Modificar um Cliente")
-  print("3 - Procurar Cliente")
-  print("4 - Apagar Cliente")
-  print("5 - Sair")
+  print(f"{adminMenuEnum.INSERIR_CLIENTE.value} - Inserir novo Cliente")
+  print(f"{adminMenuEnum.MODIFICAR_CLIENTE.value} - Modificar um Cliente")
+  print(f"{adminMenuEnum.PROCURAR_CLIENTE.value} - Procurar Cliente")
+  print(f"{adminMenuEnum.APAGAR_CLIENTE.value} - Apagar Cliente")
+  print(f"{adminMenuEnum.SAIR.value} - Sair")
   op = int(input("Escolha a operação desejada:"))
   return op
 

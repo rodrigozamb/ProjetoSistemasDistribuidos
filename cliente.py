@@ -2,7 +2,8 @@
 #!/usr/bin/python         
 
 import socket               
-from config import *                  
+from config import *
+from clienteMenuEnum import clienteMenuEnum
 
 s = socket.socket()                  
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -35,12 +36,12 @@ def validateUserIDType():
 def menu():
 
 	print("\n-------------MENU-------------")
-	print("1 - Inserir nova Tarefa")
-	print("2 - Modificar uma Tarefa")
-	print("3 - Listar tarefas")
-	print("4 - Apagar todas tarefa")
-	print("5 - Apagar uma tarefa")
-	print("6 - Sair")
+	print(f"{clienteMenuEnum.INSERIR_TAREFA.value} - Inserir nova Tarefa")
+	print(f"{clienteMenuEnum.MODIFICAR_TAREFA.value} - Modificar uma Tarefa")
+	print(f"{clienteMenuEnum.LISTAR_TAREFA.value} - Listar tarefas")
+	print(f"{clienteMenuEnum.APAGAR_TODAS_TAREFAS.value} - Apagar todas tarefa")
+	print(f"{clienteMenuEnum.APAGAR_UMA_TAREFA.value} - Apagar uma tarefa")
+	print(f"{clienteMenuEnum.SAIR.value} - Sair")
 	op = input("Escolha a operação desejada:")
 	return op
 
@@ -53,26 +54,26 @@ def run():
 		msg = menu()
 		s.send(msg.encode())
 
-		if msg == "6":
+		if int(msg) == clienteMenuEnum.SAIR.value:
 			# s.send("SAIR".encode())
 			break
-		if msg == "1":
+		if int(msg) == clienteMenuEnum.INSERIR_TAREFA.value:
 			print("\nDigite o seu ID, título e descrição da tarefa separados por vírgula ( ex: '1,Projeto SD, Fazer parte 1' ) ")
 			insertData = input()
 			s.send(insertData.encode())
-		elif msg == "2":
+		elif int(msg) == clienteMenuEnum.MODIFICAR_TAREFA.value:
 			print("\nDigite o ID, título e a nova descrição da tarefa separados por vírgula ( ex: '1,Projeto SD, aprimorar parte 1' ) ")
 			insertData = input()
 			s.send(insertData.encode())
-		elif msg == "3":
+		elif int(msg) == clienteMenuEnum.LISTAR_TAREFA.value:
 			print("\nDigite seu id:")
 			userid = input()
 			s.send(userid.encode())
-		elif msg == "4":
+		elif int(msg) == clienteMenuEnum.APAGAR_TODAS_TAREFAS.value:
 			print("\nDigite seu id:")
 			userid = input()
 			s.send(userid.encode())
-		elif msg == "5":
+		elif int(msg) == clienteMenuEnum.APAGAR_UMA_TAREFA.value:
 			print("\nDigite o ID e título da tarefa que deseja excluir separados por vírgula ( ex: '1,Projeto SD' ) ")
 			insertData = input()
 			s.send(insertData.encode())

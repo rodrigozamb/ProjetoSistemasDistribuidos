@@ -7,6 +7,7 @@ from config import *
 ####################################
 import paho.mqtt.client as mqtt
 import time
+from clienteMenuEnum import clienteMenuEnum 
 
 database = dict([])
 users = dict([])
@@ -71,12 +72,12 @@ def handle_client(c, addr):
          data = c.recv(packageSize)
          messageDecoded = data.decode()
          print("["+str(addr)+"] Mensagem recebida: "+messageDecoded)
-         if messageDecoded == "6":
+         if int(messageDecoded) == clienteMenuEnum.SAIR.value:
                print("desconectando cliente")
                flag = False
                break
 
-         if messageDecoded == "1":
+         if int(messageDecoded) == clienteMenuEnum.INSERIR_TAREFA.value:
 
                # adicionar uma nova tarefa
                idata = c.recv(packageSize)
@@ -99,7 +100,7 @@ def handle_client(c, addr):
                   c.send(
                      "Operation Fail - check key or value or identation".encode())
 
-         elif messageDecoded == "2":
+         elif int(messageDecoded) == clienteMenuEnum.MODIFICAR_TAREFA.value:
                # alterar uma tarefa
                idata = c.recv(packageSize)
                insertData = idata.decode()
@@ -131,7 +132,7 @@ def handle_client(c, addr):
                   c.send(
                      "Operation Fail - check key or value or identation".encode())
 
-         elif messageDecoded == "3":
+         elif int(messageDecoded) == clienteMenuEnum.LISTAR_TAREFA.value:
                # listar tarefas
                idata = c.recv(packageSize)
                insertData = idata.decode()
@@ -158,7 +159,7 @@ def handle_client(c, addr):
                   c.send(
                      "Operation Fail - check key or value or identation".encode())
 
-         elif messageDecoded == "4":
+         elif int(messageDecoded) == clienteMenuEnum.APAGAR_TODAS_TAREFAS.value:
                # apagar todas tarefas
                idata = c.recv(packageSize)
                insertData = idata.decode()
@@ -179,7 +180,7 @@ def handle_client(c, addr):
                   c.send(
                      "Operation Fail - check key or value or identation".encode())
 
-         elif messageDecoded == "5":
+         elif int(messageDecoded) == clienteMenuEnum.APAGAR_UMA_TAREFA.value:
                # apagar uma tarefa
                idata = c.recv(packageSize)
                insertData = idata.decode()
