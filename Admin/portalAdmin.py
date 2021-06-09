@@ -22,16 +22,24 @@ import helloworld_pb2
 import helloworld_pb2_grpc
 
 ####################################
-import paho.mqtt.client as mqtt
+#import paho.mqtt.client as mqtt
 import time
 
-broker = "localhost"
-client = mqtt.Client("admin")
-print("connecting to broker")
-client.connect(broker)
+#broker = "localhost"
+#client = mqtt.Client("admin")
+#print("connecting to broker")
+#client.connect(broker)
 ####################################
 
 db = dict([])
+
+#Comunicação com o processo Cliente.java responsável pelo ratis
+def ratisConn(data):
+  
+    ratis_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ratis_socket.connect(("localhost", 5100))
+    ratis_socket.send(data.encode())
+    ratis_socket.close()
 
 class Greeter(helloworld_pb2_grpc.GreeterServicer):
 
@@ -48,11 +56,13 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
     db[request.id] = request.name
     print(db)
 
-    client.loop_start()
-    print("\nPublishing message to topic","/data") 
-    client.publish("/data", payload="I,"+str(request.id)+","+str(db[request.id]))
-    client.loop_stop()
+    #client.loop_start()
+    #print("\nPublishing message to topic","/data") 
+    #client.publish("/data", payload="I,"+str(request.id)+","+str(db[request.id]))
+    #client.loop_stop()
 
+    ratisConn("add,"+str(request.id)+","+str(db[request.id]) + ",/n")
+    
     return helloworld_pb2.HelloReply(message='Successfully created client with CID = %s!' % request.id)
   
   def updateClient(self,request,context):
@@ -61,11 +71,13 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
     db[request.id] = request.name
     print(db)
 
-    client.loop_start()
-    print("\nPublishing message to topic","/data") 
-    client.publish("/data", payload="U,"+str(request.id)+","+str(db[request.id]))
-    client.loop_stop()
-
+    #client.loop_start()
+    #print("\nPublishing message to topic","/data") 
+    #client.publish("/data", payload="U,"+str(request.id)+","+str(db[request.id]))
+    #client.loop_stop()
+    
+    ratisConn("update,"+str(request.id)+","+str(db[request.id]) + ",/n")
+    
     return helloworld_pb2.HelloReply(message='Successfully updated client with CID = %s!' % request.id)
 
   def findClient(self, request, context):
@@ -79,10 +91,12 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
       return helloworld_pb2.HelloReply(message='Error! Client with CID = %s not found.' % request.id)
     del db[request.id]
 
-    client.loop_start()
-    print("\nPublishing message to topic","/data") 
-    client.publish("/data", payload="D,"+str(request.id))
-    client.loop_stop()
+    #client.loop_start()
+    #print("\nPublishing message to topic","/data") 
+    #client.publish("/data", payload="D,"+str(request.id))
+    #client.loop_stop()
+    
+    ratisConn("delete,"+str(request.id)+",/n")
 
     return helloworld_pb2.HelloReply(message='Successfully deleted client with CID = %s!' % request.id)
 
@@ -93,7 +107,6 @@ def serve():
     server.add_insecure_port('[::]:50051')
     server.start()
     server.wait_for_termination()
-
 
 if __name__ == '__main__':
     logging.basicConfig()
