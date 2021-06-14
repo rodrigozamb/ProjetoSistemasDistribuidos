@@ -6,6 +6,7 @@ import org.apache.ratis.protocol.*;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
 
 import java.io.*;
+import java.net.*;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.ServerSocket;
@@ -46,9 +47,11 @@ public class Cliente
 
         RaftClientReply getValue;
         CompletableFuture<RaftClientReply> compGetValue;
-        String response;
+        String response = "";
+        byte[] buffer;
 
-        ServerSocket Server = new ServerSocket (5100);
+        //Recebendo escritas dos portais
+        ServerSocket Server = new ServerSocket(5100);
 
         while(true){
 
@@ -64,26 +67,26 @@ public class Cliente
 
             switch(req[0]){
                 
-                case "add":
-                    getValue = client.io().send(Message.valueOf("add:" + req[1] + ":" + req[2]));
+                case "add_client":
+                    getValue = client.io().send(Message.valueOf("add_client:" + req[1] + ":" + req[2]));
                     response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
                     System.out.println("Resposta: " + response);
                     break;
                 
-                case "get":
-                    getValue = client.io().sendReadOnly(Message.valueOf("get:" + req[1]));
+                case "get_client":
+                    getValue = client.io().sendReadOnly(Message.valueOf("get_client:" + req[1]));
                     response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
                     System.out.println("Resposta: " + response);
                     break;
                 
-                case "delete":
-                    getValue = client.io().send(Message.valueOf("delete:" + req[1]));
+                case "delete_client":
+                    getValue = client.io().send(Message.valueOf("delete_client:" + req[1]));
                     response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
                     System.out.println("Resposta: " + response);
                     break;
                     
-                case "update":
-                    getValue = client.io().send(Message.valueOf("update:" + req[1] + ":" + req[2]));
+                case "update_client":
+                    getValue = client.io().send(Message.valueOf("update_client:" + req[1] + ":" + req[2]));
                     response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
                     System.out.println("Resposta: " + response);
                     break;
@@ -91,6 +94,14 @@ public class Cliente
                 default:
                     System.out.println("Comando inválido");
             }
+
+            //Enviando as modificações para todos os processos
+            DatagramSocket socket = new DatagramSocket();
+            InetAddress endereço = InetAddress.getByName("224.1.1.1");
+            buffer = response.getBytes();
+            DatagramPacket pacote = new DatagramPacket(buffer, buffer.length, endereço, 5101);
+            
+            socket.send(pacote);
 
             client.close();
         }
